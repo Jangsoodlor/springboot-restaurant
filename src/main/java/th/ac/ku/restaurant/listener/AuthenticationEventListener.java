@@ -9,8 +9,7 @@ import org.springframework.security.authentication.event.AuthenticationFailureBa
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.stereotype.Component;
 
-import org.springframework.security.core.userdetails.User;
-
+import th.ac.ku.restaurant.entity.User;
 import java.time.Instant;
 
 @Component
@@ -27,7 +26,7 @@ public class AuthenticationEventListener {
     @EventListener
     public void onSuccess(AuthenticationSuccessEvent event) {
         User user = (User) event.getAuthentication().getPrincipal();
-        logger.info(user.getUsername() + " has successfully logged in at "
+        logger.info("user: " + user.getUsername() + ", role: " + user.getRole() + " has successfully logged in at "
                 + Instant.now());
     }
 
