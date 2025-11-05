@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityExistsException;
+
 import java.time.Instant;
 
 @Service
@@ -27,6 +29,9 @@ public class UserService {
     }
 
     public void createUser(SignupRequest request) {
+        if (this.userExists(request.getUsername())) {
+            throw new EntityExistsException("Error: Username is already taken!");
+        }
         User dao = new User();
         dao.setUsername(request.getUsername());
         dao.setPassword(encoder.encode(request.getPassword()));

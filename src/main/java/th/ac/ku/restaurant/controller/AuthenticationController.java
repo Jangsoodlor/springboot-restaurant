@@ -4,7 +4,6 @@ import th.ac.ku.restaurant.dto.SignupRequest;
 import th.ac.ku.restaurant.security.JwtUtil;
 import th.ac.ku.restaurant.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -50,7 +51,7 @@ public class AuthenticationController {
     public ResponseEntity<String> registerUser(@Valid @RequestBody SignupRequest request) {
 
         if (userService.userExists(request.getUsername()))
-            return new ResponseEntity<>("Error: Username is already taken!", HttpStatus.BAD_REQUEST);
+            throw new EntityExistsException("Error: Username is already taken!");
         ;
 
         userService.createUser(request);
