@@ -19,7 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import jakarta.persistence.EntityExistsException;
 import jakarta.validation.Valid;
 
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
@@ -44,6 +43,7 @@ public class AuthenticationController {
                         request.getUsername(),
                         request.getPassword()));
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        System.out.println("yes");
         return ResponseEntity.ok(jwtUtils.generateToken(userDetails.getUsername()));
     }
 
