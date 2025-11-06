@@ -52,33 +52,28 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(SecurityException.class)
-    public boolean handleSecurityException(SecurityException e) {
+    public void handleSecurityException(SecurityException e) {
         logger.error("Invalid JWT signature: " + e.getMessage());
-        return false;
     }
 
     @ExceptionHandler(MalformedJwtException.class)
-    public boolean handleMalformedJwtException(MalformedJwtException e) {
+    public void handleMalformedJwtException(MalformedJwtException e) {
         logger.error("Invalid JWT token: " + e.getMessage());
-        return false;
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public boolean handleExpiredJwtException(ExpiredJwtException e) {
+    public void handleExpiredJwtException(ExpiredJwtException e) {
         logger.error("JWT token is expired: " + e.getMessage());
-        return false;
     }
 
     @ExceptionHandler(UnsupportedJwtException.class)
-    public boolean handleUnsupportedJwtException(UnsupportedJwtException e) {
+    public void handleUnsupportedJwtException(UnsupportedJwtException e) {
         logger.error("JWT token is unsupported: " + e.getMessage());
-        return false;
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public boolean handleIllegalArgumentException(IllegalArgumentException e) {
+    public void handleIllegalArgumentException(IllegalArgumentException e) {
         logger.error("JWT claims string is empty: " + e.getMessage());
-        return false;
     }
 
     @ExceptionHandler(IOException.class)
