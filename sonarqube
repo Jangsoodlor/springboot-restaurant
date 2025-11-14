@@ -1,0 +1,6 @@
+mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=restaurant \
+  -Dsonar.projectName='restaurant' \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.token=sqp_0201ffa17fce2d205ded23f78ab7a37116c04c8f \
+-DskipTests
