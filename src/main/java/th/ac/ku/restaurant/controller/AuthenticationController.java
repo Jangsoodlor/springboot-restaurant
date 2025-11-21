@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+
 import java.util.Map;
 
 import th.ac.ku.restaurant.dto.LoginRequest;
@@ -28,10 +30,25 @@ import jakarta.validation.Valid;
 
 import jakarta.servlet.http.Cookie;
 import th.ac.ku.restaurant.dto.UserInfoResponse;
+import th.ac.ku.restaurant.entity.User;
+
+import org.springframework.beans.factory.annotation.Value;
+
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+
+import th.ac.ku.restaurant.dto.GoogleAuthRequest;
+
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
+
+    @Value("${google.clientId}")
+    private String googleClientId;
 
     private UserService userService;
     private AuthenticationManager authenticationManager;
@@ -130,6 +147,41 @@ public class AuthenticationController {
         response.addHeader("Set-Cookie", cleared.toString());
 
         return ResponseEntity.ok("Logged out");
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<?> loginWithGoogle(@RequestBody GoogleAuthRequest request) throws Exception {
+
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                new NetHttpTransport(),
+                new GsonFactory()).setAudience(Collections.singletonList(googleClientId))
+                .build();
+
+        GoogleIdToken idToken = verifier.verify(request.credential);
+
+        if (idToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
+
+        String email = idToken.getPayload().getEmail();
+        String name = (String) idToken.getPayload().get("name");
+
+        User user = userService.findOrCreateGoogleUser(email, name);
+        String token = jwtUtils.generateToken(user.getUsername());
+
+        // Create session cookie
+        ResponseCookie cookie = ResponseCookie.from(AUTH_COOKIE_NAME, token)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(60 * 60) // 1 hour
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(Map.of(
+                        "message", "Successfully logged in using Google"));
     }
 
 }
