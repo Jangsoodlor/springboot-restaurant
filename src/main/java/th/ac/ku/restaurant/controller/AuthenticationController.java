@@ -113,7 +113,9 @@ public class AuthenticationController {
             return ResponseEntity.status(401).body("Invalid token");
         }
 
-        return ResponseEntity.ok(new UserInfoResponse(username));
+        String role = this.userService.getUserRoleFromUserName(username);
+
+        return ResponseEntity.ok(new UserInfoResponse(username, role));
     }
 
     private String extractTokenFromCookie(HttpServletRequest request) {
