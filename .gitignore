@@ -34,3 +34,4 @@ build/
 .env
 log/
 sonarqube
+**/keystore.p12
