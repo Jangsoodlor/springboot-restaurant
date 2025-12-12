@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom'
 import api from "../api/axios";
 
 export default function RestaurantFormPage() {
   const [form, setForm] = useState({ name: "", rating: "", location: "" });
   const [submitted, setSubmitted] = useState(null);
+  const navigate = useNavigate()
+
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -17,7 +20,9 @@ export default function RestaurantFormPage() {
     async function submit() {
       try {
         await api.post('/api/restaurants', form);
+        alert("Restaurant Created 🎉🎉🎉")
       } catch (error) {
+        alert(error)
         console.error(error);
       }
       setForm({ name: "", rating: "", location: "" });
@@ -26,51 +31,56 @@ export default function RestaurantFormPage() {
     submit();
   }
   return (
-    <div className="min-h-screen flex items-center justify-center p-10 bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6">Add Restaurant</h1>
+    <div style={{ padding: '2rem' }}>
+      <div>
+        <h1 style={{ marginBottom: '2rem' }}>
+          Create a new Restaurant
+        </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block mb-1 font-medium">Name</label>
+        <form onSubmit={handleSubmit}>
+          <div style={{ paddingBottom: '1rem' }}>
+            <label style={{ paddingRight: '1rem' }}>Name</label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full p-2 border rounded-lg"
               required
             />
           </div>
 
-          <div>
-            <label className="block mb-1 font-medium">Rating</label>
+          <div style={{ paddingBottom: '1rem' }}>
+            <label style={{ paddingRight: '1rem' }}>Rating</label>
             <input
               name="rating"
               value={form.rating}
               onChange={handleChange}
-              className="w-full p-2 border rounded-lg"
               required
             />
           </div>
 
-          <div>
-            <label className="block mb-1 font-medium">Location</label>
+          <div style={{ paddingBottom: '1rem' }}>
+            <label style={{ paddingRight: '1rem' }}>Location</label>
             <input
               name="location"
               value={form.location}
               onChange={handleChange}
-              className="w-full p-2 border rounded-lg"
               required
             />
           </div>
 
           <button
+            style={{ marginTop: '1rem' }}
             type="submit"
-            className="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Submit
           </button>
         </form>
+        <button
+          style={{ marginTop: '1rem' }}
+          onClick={() => { navigate('/restaurant') }}
+        >
+          Restaurant List
+        </button>
 
       </div>
     </div>
